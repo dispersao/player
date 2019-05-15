@@ -23,8 +23,7 @@ public:
     void gotMessage(ofMessage msg);
     
     ofVideoPlayer         videoA, videoB;
-    bool                frameByframe;
-    
+
     ofDirectory dir;
     vector<string> sceneNames;
     string currentScene;

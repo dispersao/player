@@ -26,12 +26,10 @@ void ofApp::setup(){
         resizedVideoWidth = screenWidth;
         videoX = 0;
         videoY = ( screenHeight - resizedVideoHeight ) / 2 ;
-        ofLog(OF_LOG_NOTICE, "B");
     }
         
     ofBackground(0,0,0);
     ofSetVerticalSync(true);
-    frameByframe = false;
     
     dir.listDir("scenes");
     dir.allowExt("mov");
@@ -45,6 +43,7 @@ void ofApp::setup(){
     // you can now iterate through the files and load them into the ofImage vector
     for(int i = 0; i < (int)dir.size(); i++){
         sceneNames[i] = (dir.getPath(i));
+        playList.push_back((string)dir.getPath(i));
         ofLog(OF_LOG_NOTICE, "scene name " + sceneNames[i]);
     }
     currentScene = "";
@@ -66,13 +65,31 @@ void ofApp::update(){
     
     
     if (videoA.isLoaded()) {
-        ofLog(OF_LOG_NOTICE, "frame time duration %d %d %f %f", videoA.getCurrentFrame(), videoA.getTotalNumFrames(), videoA.getPosition(), videoA.getDuration());
+        ofLog(OF_LOG_NOTICE, "A frame time duration %d %d %f %f", videoA.getCurrentFrame(), videoA.getTotalNumFrames(), videoA.getPosition(), videoA.getDuration());
+        if (videoA.getCurrentFrame()>(videoA.getTotalNumFrames()-2)) {
+            if (playList.size()>0) {
+                changeVideo(playList.front());
+                playList.pop_front();
+            } else {
+                ofLog(OF_LOG_ERROR, "Empty playlist");
+            }
+        }
         videoA.update();
     }
 
-    if (videoB.isLoaded())
-        videoB.update();
+    if (videoB.isLoaded()) {
 
+        videoB.update();
+        ofLog(OF_LOG_NOTICE, "B frame time duration %d %d %f %f", videoB.getCurrentFrame(), videoB.getTotalNumFrames(), videoB.getPosition(), videoB.getDuration());
+        if (videoB.getCurrentFrame()>(videoB.getTotalNumFrames()-2)) {
+            if (playList.size()>0) {
+                changeVideo(playList.front());
+                playList.pop_front();
+            } else {
+                ofLog(OF_LOG_ERROR, "Empty playlist");
+            }
+        }
+    }
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
@@ -140,10 +157,6 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed  (int key){
     switch(key){
-        case 'f':
-            //frameByframe=!frameByframe;
-            //fingerMovie.setPaused(frameByframe);
-            break;
         case OF_KEY_RIGHT:
             //fingerMovie.previousFrame();
             if (currentSceneIndex == (int)sceneNames.size()-1) {
