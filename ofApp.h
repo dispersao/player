@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxXmlSettings.h"
-#include "ofxGui.h"
+#include "ofxGuiExtended.h"
 
 class ofApp : public ofBaseApp{
 
@@ -22,6 +22,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+        void buttonPressed (const void * sender);
     
         ofVideoPlayer         videoA, videoB;
         
@@ -48,26 +49,20 @@ class ofApp : public ofBaseApp{
         ofxXmlSettings xmlSettings;
         ofTrueTypeFont messageFont;
     
-//      TO DO
-//        ofParameter<void> buttonParams{"here"};
-//
-//        ofParameterGroup parameters{
-//            "settings",
-//            buttonParams,
-//        };
-//        ofxPanel gui{parameters};
-        ofxPanel gui;
+        ofxGui gui;
+        ofxGuiPanel *panel;
+        vector<ofParameter <void>> buttons;
         ofEventListener buttonListener;
     
     
         bool hideGui = false;
-        vector<ofxButton> buttons;
-        void buttonPressed(const void * sender);
         string statusMessage;
         
         ofURLFileLoader http;
         ofJson responseJson, scriptJson;
         
         int numScripts = 0;
+    
+        ofEventListener listener;
 		
 };

@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include "ofxButton.h"
 
 
 
@@ -99,6 +98,13 @@ void ofApp::setup(){
     
     ofSetBackgroundColor(200);
 
+    
+    panel = gui.addPanel();
+    panel->setName("play");
+    panel->setPosition(20,40);
+    
+
+    
     //online scripts stuff
     messageFont.load("mono.ttf", 10);
     
@@ -183,11 +189,12 @@ void ofApp::setup(){
             
             numScripts = (int)scriptJson.size();
             buttons.resize(numScripts);
-            gui.setup("load film", "guisettings.xml",550,30);
             for (int i=0;i<numScripts;i++) {
                 // TO DO!
-//                buttons[i].addListener(this, &ofApp::buttonPressed);
-                gui.add(buttons[i].setup(to_string(i+1),40,20));
+                buttons[i].setName(to_string(i+1));
+                panel->add(buttons[i], ofJson({{"type", "fullsize"}, {"show-name", "true"}, {"text-align", "center"}}));
+                buttons[i].addListener(this, &ofApp::buttonPressed);
+                //gui.add(buttons[i].setup(to_string(i+1),40,20));
             }
             
             //now we get the list of file names
@@ -324,33 +331,35 @@ void ofApp::draw(){
 
         if (numScripts > 0) {
 
-            messageFont.drawString("ID", 30, 50);
-            messageFont.drawString("Duration", 50, 50);
-            messageFont.drawString("N. seq", 150, 50);
-            messageFont.drawString("Author", 250, 50);
-            messageFont.drawString("Name", 350, 50);
+            //messageFont.drawString("ID", 130, 50);
+            messageFont.drawString("Duration", 250, 50);
+            messageFont.drawString("N. seq", 350, 50);
+            messageFont.drawString("Author", 450, 50);
+            messageFont.drawString("Name", 550, 50);
 
             for (int i=0;i<numScripts;i++) {
-                int gap = 20;
-                messageFont.drawString(to_string(i+1), 30, (65+(i*gap)));
-                int minutes = (int)(scriptDurations[i]/60.0f);
-                string durationText = to_string(minutes);
+                int gap = 34;
+                int top = 90;
+                //messageFont.drawString(to_string(i+1), 130, (top+(i*gap)));
+                int totalMinutes = (int)(scriptDurations[i]/60.0f);
+                string durationText = to_string(totalMinutes);
+                if (durationText=="0") durationText = "00";
                 durationText.append(":");
-                durationText.append(to_string((int)(scriptDurations[i]-(60.0f*minutes))));
-                messageFont.drawString(durationText, 50, (65+(i*gap)));
+                string minutes = to_string((int)(scriptDurations[i]-(60.0f*totalMinutes)));
+                if (minutes=="0") minutes = "00";
+                durationText.append(minutes);
+                messageFont.drawString(durationText, 250, (top+(i*gap)));
                 int numSequences = scriptJson[i]["sequences"].size();
-                messageFont.drawString(to_string(numSequences), 150, (65+(i*gap)));
+                messageFont.drawString(to_string(numSequences), 350, (top+(i*gap)));
                 string author = scriptJson[i]["author"];
                 author.erase(remove( author.begin(), author.end(), '\"' ),author.end());
-                messageFont.drawString(author, 250, (65+(i*gap)));
+                messageFont.drawString(author, 450, (top+(i*gap)));
                 string name = scriptJson[i]["name"];
                 name.erase(remove( name.begin(), name.end(), '\"' ),name.end());
-                messageFont.drawString(name, 350, (65+(i*gap)));
+                messageFont.drawString(name, 550, (top+(i*gap)));
 
             }
         }
-        
-        gui.draw();
     }
 }
 
@@ -458,11 +467,9 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
-//TO DO !
-//void ofApp::buttonPressed(const void * sender) {
-//    string name = (*(ofxButton*) sender).getName();
-//    // ofxButton button = *(ofxButton*) sender;
-//    //    cout << button.getName() << endl;
-//    // string name = button.getName();
-//
-//}
+
+void ofApp::buttonPressed (const void * sender) {
+    ofParameter<void> * p = (ofParameter<void> *)sender;
+    string name = p->getName();
+    cout << name << endl;
+}
