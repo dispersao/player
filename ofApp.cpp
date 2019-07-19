@@ -5,17 +5,17 @@
 
 void ofApp::changeVideo(string newVideo) {
     if (currentSceneIndex == 0) {
-        currentSceneIndex = (int)sceneNames.size() - 1;
+        currentSceneIndex = (int)playList.size() - 1;
     } else {
         currentSceneIndex --;
     }
     //            videoB.load(sceneNames[currentSceneIndex]);
     //            videoB.play();
     if (currentVideoPlayer=='A') {
-        videoB.load(sceneNames[currentSceneIndex]);
+        videoB.load(makeVideoFileName(playList[currentSceneIndex]));
         videoB.play();
     } else {
-        videoA.load(sceneNames[currentSceneIndex]);
+        videoA.load(makeVideoFileName(playList[currentSceneIndex]));
         videoA.play();
     }
     changeVideoFlag = 1;
@@ -79,8 +79,7 @@ void ofApp::setup(){
                 int pos = sceneName.find('.');
                 
                 sceneDurations.insert ( pair<string, float> (sceneName.substr(0,pos), temp.getDuration()));
-//                cout << sceneName.substr(0,pos) << " " << temp.getDuration() << endl;
-                playList.push_back((string)dir.getPath(i));
+
                 
             }
         } else {
@@ -102,6 +101,7 @@ void ofApp::setup(){
     panel = gui.addPanel();
     panel->setName("play");
     panel->setPosition(20,40);
+    panel->setVisible(showGui);
     
 
     
@@ -188,6 +188,8 @@ void ofApp::setup(){
             statusMessage.append(" scripts");
             
             numScripts = (int)scriptJson.size();
+            
+            //create the gui buttons with listener
             buttons.resize(numScripts);
             for (int i=0;i<numScripts;i++) {
                 // TO DO!
@@ -235,7 +237,8 @@ void ofApp::setup(){
                 
                 
                 
-                //create playlists from scripts
+                //create vector of scripts
+                scripts.resize(numScripts);
                 for (int i=0;i<numScripts;i++) {
                     ofJson sequences = scriptJson[i]["sequences"];
                     
@@ -244,6 +247,7 @@ void ofApp::setup(){
                         string sceneName;
                         sceneName = scriptSceneNames[sequences[j]];
                         duration += sceneDurations[sceneName];
+                        scripts[i].push_back(sceneName);
                     }
                     
                     scriptDurations.push_back(duration);
@@ -275,11 +279,12 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     if (videoA.isLoaded()) {
-        
+        cout << "video A loaded" << endl;
         if (videoA.getCurrentFrame()>(videoA.getTotalNumFrames()-2)) {
+         
             if (playList.size()>0) {
-                changeVideo(playList.front());
-                playList.pop_front();
+                currentSceneIndex++;
+                changeVideo(playList[currentSceneIndex]);
             } else {
                 ofLog(OF_LOG_ERROR, "Empty playlist");
             }
@@ -293,9 +298,8 @@ void ofApp::update(){
         
         if (videoB.getCurrentFrame()>(videoB.getTotalNumFrames()-2)) {
             if (playList.size()>0) {
-                
-                changeVideo(playList.front());
-                playList.pop_front();
+                currentSceneIndex++;
+                changeVideo(playList[currentSceneIndex]);
             } else {
                 ofLog(OF_LOG_ERROR, "Empty playlist");
             }
@@ -323,8 +327,11 @@ void ofApp::draw(){
         }
     }
  
-    if (!hideGui) {
+    if (showGui) {
 
+        
+        //draw gui
+        
         ofSetColor(24, 24, 24);
         messageFont.drawString("status: "+statusMessage, 10, 30);
 
@@ -384,7 +391,7 @@ void ofApp::keyPressed(int key){
                 videoA.play();
             }
             changeVideoFlag = 1;
-            hideGui = true;
+            showGui = false;
             break;
         case OF_KEY_LEFT:
             //fingerMovie.nextFrame();
@@ -403,13 +410,13 @@ void ofApp::keyPressed(int key){
                 videoA.play();
             }
             changeVideoFlag = 1;
-            hideGui = true;
+            showGui = false;
             break;
         case OF_KEY_RETURN:
             videoA.load(sceneNames[currentSceneIndex]);
             videoA.setLoopState(OF_LOOP_NORMAL);
             videoA.play();
-            hideGui = true;
+            showGui = false;
             break;
         case '0':
             //fingerMovie.firstFrame();
@@ -471,5 +478,25 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 void ofApp::buttonPressed (const void * sender) {
     ofParameter<void> * p = (ofParameter<void> *)sender;
     string name = p->getName();
-    cout << name << endl;
+    int chosen = (atoi(name.c_str()))-1;
+    playList.clear();
+    copy(scripts[chosen].begin(), scripts[chosen].end(), back_inserter(playList));
+    currentSceneIndex =0;
+    showGui = false;
+    panel->setVisible(showGui);
+    videoA.load(makeVideoFileName(playList[currentSceneIndex]));
+    cout << "first video: " << makeVideoFileName(playList[currentSceneIndex]) << endl;
+    videoA.setLoopState(OF_LOOP_NORMAL);
+    videoA.play();
+    currentVideoPlayer='A';
+    //cout << name << endl;
 }
+
+string ofApp::makeVideoFileName(string sceneName) {
+    string loadVideoName = videoFilePreffix;
+    loadVideoName.append(sceneName);
+    loadVideoName.append(videoFileSuffix);
+    
+    return loadVideoName;
+}
+

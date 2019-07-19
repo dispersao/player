@@ -23,18 +23,24 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
         void buttonPressed (const void * sender);
+        string makeVideoFileName(string sceneName);
+    
     
         ofVideoPlayer         videoA, videoB;
         
         ofDirectory dir;
-        vector<string> sceneNames;
-        vector<string> scriptSceneNames;
+        vector<string> sceneNames; //list of scene names on disk
+        vector<string> scriptSceneNames; //list of scene names on scripts (without leading 0s)
+        vector<vector<string>> scripts;
         map<string, float> sceneDurations;
         vector<float> scriptDurations;
     
         string currentScene;
+        const string videoFilePreffix = "scenes/";
+        const string videoFileSuffix = ".mov";
+    
         
-        list<string> playList;
+        vector<string> playList;
     
         int currentSceneIndex;
         
@@ -55,7 +61,7 @@ class ofApp : public ofBaseApp{
         ofEventListener buttonListener;
     
     
-        bool hideGui = false;
+        bool showGui = true;
         string statusMessage;
         
         ofURLFileLoader http;
