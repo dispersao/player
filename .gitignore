@@ -109,6 +109,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# mediafiles
+*.mov
+*.jpg
+
 # Others
 Makefile
 openFrameworks-Info.plist
