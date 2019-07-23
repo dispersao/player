@@ -120,4 +120,5 @@ Project.xcconfig
 dispersao-player.xcodeproj/
 bin/dispersao-playerDebug.app/
 bin/data/scenes/
+bin/data/scenes
 bin/data/mySettings.xml
