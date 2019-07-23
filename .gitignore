@@ -111,7 +111,7 @@ $RECYCLE.BIN/
 
 # Others
 Makefile
-openFramewords-info.plist
+openFrameworks-Info.plist
 Project.xcconfig
 dispersao-player.xcodeproj/
 bin/dispersao-playerDebug.app/
