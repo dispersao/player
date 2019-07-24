@@ -332,7 +332,7 @@ void ofApp::draw(){
         
         //draw gui
         
-        ofSetColor(24, 24, 24);
+
         messageFont.drawString("status: "+statusMessage, 10, 30);
 
 
