@@ -215,7 +215,7 @@ void ofApp::setup(){
 
                 ofJson sequencesJson = nlohmann::json::parse(response.data.getText())  ;
                 
-                scriptSceneNames.assign(sequencesJson["data"].size(),"");
+                scriptSceneNames.assign(sequencesJson["data"].size()+1,"");
                 for (auto& element : sequencesJson["data"]) {
                     int id = element["id"];
                     string s = element["sceneNumber"];
