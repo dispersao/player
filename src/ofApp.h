@@ -27,6 +27,7 @@ class ofApp : public ofBaseApp{
     
     
         ofVideoPlayer         videoA, videoB;
+        int framesToSkip = 240;
         
         ofDirectory dir;
         vector<string> sceneNames; //list of scene names on disk

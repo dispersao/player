@@ -334,7 +334,7 @@ void ofApp::draw(){
         
 
         messageFont.drawString("status: "+statusMessage, 10, 30);
-
+        messageFont.drawString("key up/down: skip scene | key left/right: skip 10 sec | space: play/pause",10, screenHeight-30);
 
         if (numScripts > 0) {
 
@@ -373,59 +373,82 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     switch(key){
-        case OF_KEY_RIGHT:
-            //fingerMovie.previousFrame();
-            if (currentSceneIndex == (int)sceneNames.size()-1) {
-                currentSceneIndex =0;
-            } else {
-                currentSceneIndex++;
-                
-            }
-            //            videoB.load(sceneNames[currentSceneIndex]);
-            //            videoB.play();
-            if (currentVideoPlayer=='A') {
-                videoB.load(sceneNames[currentSceneIndex]);
-                videoB.play();
-            } else {
-                videoA.load(sceneNames[currentSceneIndex]);
-                videoA.play();
-            }
-            changeVideoFlag = 1;
-            showGui = false;
-            break;
-        case OF_KEY_LEFT:
-            //fingerMovie.nextFrame();
-            if (currentSceneIndex == 0) {
-                currentSceneIndex = (int)sceneNames.size() - 1;
-            } else {
-                currentSceneIndex --;
-            }
-            //            videoB.load(sceneNames[currentSceneIndex]);
-            //            videoB.play();
-            if (currentVideoPlayer=='A') {
-                videoB.load(sceneNames[currentSceneIndex]);
-                videoB.play();
-            } else {
-                videoA.load(sceneNames[currentSceneIndex]);
-                videoA.play();
-            }
-            changeVideoFlag = 1;
-            showGui = false;
-            break;
-        case OF_KEY_RETURN:
+    case OF_KEY_DOWN:
+        //fingerMovie.previousFrame();
+        if (currentSceneIndex == (int)sceneNames.size()-1) {
+            currentSceneIndex =0;
+        } else {
+            currentSceneIndex++;
+
+        }
+        //            videoB.load(sceneNames[currentSceneIndex]);
+        //            videoB.play();
+        if (currentVideoPlayer=='A') {
+            videoB.load(sceneNames[currentSceneIndex]);
+            videoB.play();
+        } else {
             videoA.load(sceneNames[currentSceneIndex]);
-            videoA.setLoopState(OF_LOOP_NORMAL);
             videoA.play();
-            showGui = false;
+        }
+        changeVideoFlag = 1;
+        break;
+    case OF_KEY_UP:
+        //fingerMovie.nextFrame();
+        if (currentSceneIndex == 0) {
+            currentSceneIndex = (int)sceneNames.size() - 1;
+        } else {
+            currentSceneIndex --;
+        }
+        //            videoB.load(sceneNames[currentSceneIndex]);
+        //            videoB.play();
+        if (currentVideoPlayer=='A') {
+            videoB.load(sceneNames[currentSceneIndex]);
+            videoB.play();
+        } else {
+            videoA.load(sceneNames[currentSceneIndex]);
+            videoA.play();
+        }
+        changeVideoFlag = 1;
+        break;
+    case OF_KEY_LEFT:
+        if (currentVideoPlayer=='A') {
+            videoA.setFrame(videoA.getCurrentFrame()-framesToSkip);
+        } else{
+            videoB.setFrame(videoB.getCurrentFrame()-framesToSkip);
+        }
+        break;
+    case OF_KEY_RIGHT:
+        if (currentVideoPlayer=='A') {
+            videoA.setFrame(videoA.getCurrentFrame()+framesToSkip);
+        } else{
+            videoB.setFrame(videoB.getCurrentFrame()+framesToSkip);
+        }
+        break;
+    case ' ':
+        if (currentVideoPlayer=='A') {
+            if (videoA.isPaused()) {
+                videoA.setPaused(false);
+
+            } else {
+                videoA.setPaused(true);
+            }
+        } else {
+            if (videoB.isPaused()) {
+                videoB.setPaused(false);
+
+            } else {
+                videoB.setPaused(true);
+            }
             break;
-        case '0':
-            //fingerMovie.firstFrame();
-            break;
+        }
     }
 }
 
+
+
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+
 
 }
 
